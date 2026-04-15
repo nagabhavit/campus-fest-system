@@ -1,111 +1,83 @@
 "use client";
 import React, { useState } from 'react';
 
-// --- TYPES ---
-type Role = 'student' | 'organizer' | 'admin';
-interface Event {
-  id: number; title: string; category: string; date: string; 
-  desc: string; slots: number; registered: number;
-}
-
 export default function CampusFestPro() {
-  // 1. STATE MANAGEMENT (Role & Data)
-  const [role, setRole] = useState<Role>('student');
-  const [myEvents, setMyEvents] = useState<number[]>([]);
-  const [events, setEvents] = useState<Event[]>([
-    { id: 1, title: "Hack-Hyderabad", category: "Technical", date: "April 20", desc: "24hr coding challenge.", slots: 100, registered: 45 },
-    { id: 2, title: "Cultural Night", category: "Cultural", date: "April 21", desc: "Dance and Music fest.", slots: 500, registered: 120 },
-  ]);
+  const [role, setRole] = useState('participant'); // participant, organizer, or admin
+  const [registrations, setRegistrations] = useState<{ [key: number]: boolean }>({});
 
-  // 2. FUNCTIONS
-  const handleRegister = (id: number) => {
-    if (!myEvents.includes(id)) {
-      setMyEvents([...myEvents, id]);
-      setEvents(events.map(e => e.id === id ? { ...e, registered: e.registered + 1 } : e));
-    }
+  const events = [
+    { id: 1, name: "Hackathon 2026", cat: "Technical", venue: "Lab 1", slots: 50 },
+    { id: 2, name: "Street Dance", cat: "Cultural", venue: "Open Air Theatre", slots: 20 },
+  ];
+
+  const toggleReg = (id: number) => {
+    setRegistrations(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
   return (
-    <div className="min-h-screen bg-[#fafafa] text-slate-900 font-sans">
-      {/* ROLE SELECTOR (For Demo Purposes) */}
-      <div className="bg-black text-white p-2 text-center text-[10px] font-bold uppercase tracking-widest">
-        Viewing as: {role} | 
-        <button onClick={() => setRole('student')} className="ml-4 underline">Student</button>
-        <button onClick={() => setRole('organizer')} className="ml-4 underline">Organizer</button>
+    <div className="min-h-screen bg-slate-50 font-sans">
+      {/* ROLE SWITCHER - Pro Resume Move */}
+      <div className="bg-slate-900 text-white p-3 flex justify-center gap-6 text-xs font-bold uppercase tracking-widest">
+        <span>Login As:</span>
+        <button onClick={() => setRole('participant')} className={`hover:text-blue-400 ${role === 'participant' && 'text-blue-400'}`}>Participant</button>
+        <button onClick={() => setRole('organizer')} className={`hover:text-green-400 ${role === 'organizer' && 'text-green-400'}`}>Organizer</button>
+        <button onClick={() => setRole('admin')} className={`hover:text-red-400 ${role === 'admin' && 'text-red-400'}`}>Admin</button>
       </div>
 
-      {/* NAVBAR */}
-      <nav className="flex justify-between items-center px-10 py-6 bg-white border-b border-gray-200">
-        <h1 className="text-2xl font-black tracking-tighter">FEST.LY</h1>
-        <div className="flex items-center gap-6">
-          <span className="text-sm font-medium text-gray-500">Dashboard</span>
-          <div className="h-10 w-10 bg-gradient-to-tr from-blue-500 to-purple-500 rounded-full shadow-lg"></div>
+      <nav className="p-6 bg-white border-b flex justify-between items-center shadow-sm">
+        <h1 className="text-2xl font-black text-slate-800">CAMPUS.FEST <span className="text-blue-600 text-sm">PRO</span></h1>
+        <div className="flex gap-4 items-center">
+          <span className="text-sm font-medium bg-slate-100 px-3 py-1 rounded-full uppercase text-slate-500">Mode: {role}</span>
         </div>
       </nav>
 
-      <main className="max-w-6xl mx-auto p-10">
-        {/* HEADER */}
-        <div className="mb-12">
-          <h2 className="text-4xl font-bold">Welcome back, {role === 'student' ? 'Nagabhavit' : 'Admin'}</h2>
-          <p className="text-gray-500 mt-2">Manage your registrations and discover new opportunities.</p>
-        </div>
-
-        {/* ORGANIZER TOOLS (Conditional Rendering) */}
-        {role !== 'student' && (
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-12">
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-              <p className="text-xs font-bold text-gray-400 uppercase">Total Regs</p>
-              <p className="text-3xl font-black mt-1">1,240</p>
+      <main className="max-w-5xl mx-auto py-12 px-6">
+        {/* DASHBOARD LOGIC */}
+        {role === 'participant' ? (
+          <section>
+            <h2 className="text-3xl font-bold mb-8 text-slate-900 text-center">Available Events</h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              {events.map(e => (
+                <div key={e.id} className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl transition-all">
+                  <div className="flex justify-between mb-4">
+                    <span className="text-xs font-bold text-blue-600 uppercase tracking-tighter">{e.cat}</span>
+                    <span className="text-xs font-bold text-slate-400 underline">{e.venue}</span>
+                  </div>
+                  <h3 className="text-2xl font-bold mb-4">{e.name}</h3>
+                  <button 
+                    onClick={() => toggleReg(e.id)}
+                    className={`w-full py-4 rounded-2xl font-black transition-all ${registrations[e.id] ? 'bg-green-100 text-green-700' : 'bg-slate-900 text-white hover:bg-slate-800'}`}
+                  >
+                    {registrations[e.id] ? '✓ REGISTERED' : 'ONE-CLICK REGISTER'}
+                  </button>
+                </div>
+              ))}
             </div>
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-              <p className="text-xs font-bold text-gray-400 uppercase">Revenue</p>
-              <p className="text-3xl font-black mt-1">₹45,000</p>
+          </section>
+        ) : (
+          <section className="bg-white rounded-3xl p-10 border border-slate-200 shadow-sm">
+            <div className="flex justify-between items-center mb-10">
+              <h2 className="text-3xl font-bold">Organizer Analytics</h2>
+              <button className="bg-blue-600 text-white px-6 py-2 rounded-xl text-sm font-bold">+ Create Event</button>
             </div>
-            <button className="md:col-span-2 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-colors">
-              + Create New Event
-            </button>
-          </div>
+            <div className="grid grid-cols-3 gap-6 mb-10 text-center">
+              <div className="bg-slate-50 p-6 rounded-2xl">
+                <p className="text-slate-500 text-xs font-bold uppercase mb-2">Registrations</p>
+                <p className="text-3xl font-black">452</p>
+              </div>
+              <div className="bg-slate-50 p-6 rounded-2xl">
+                <p className="text-slate-500 text-xs font-bold uppercase mb-2">Revenue</p>
+                <p className="text-3xl font-black">₹12,400</p>
+              </div>
+              <div className="bg-slate-50 p-6 rounded-2xl">
+                <p className="text-slate-500 text-xs font-bold uppercase mb-2">Volunteers</p>
+                <p className="text-3xl font-black">24</p>
+              </div>
+            </div>
+            {/* SEARCH & FILTER PLACEHOLDER */}
+            <input type="text" placeholder="Search registered students..." className="w-full p-4 bg-slate-50 border rounded-xl outline-none focus:border-blue-500" />
+          </section>
         )}
-
-        {/* EVENT LIST */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {events.map(event => (
-            <div key={event.id} className="bg-white rounded-3xl p-8 border border-gray-100 hover:shadow-2xl hover:shadow-blue-500/5 transition-all group">
-              <div className="flex justify-between items-start mb-6">
-                <span className="px-4 py-1 bg-slate-100 rounded-full text-[10px] font-bold uppercase tracking-widest">{event.category}</span>
-                <span className="text-sm font-bold text-blue-600">{event.date}</span>
-              </div>
-              <h3 className="text-2xl font-bold group-hover:text-blue-600 transition-colors">{event.title}</h3>
-              <p className="text-gray-500 mt-4 leading-relaxed">{event.desc}</p>
-              
-              {/* PROGRESS BAR (Analytics Feature) */}
-              <div className="mt-8">
-                <div className="flex justify-between text-xs font-bold mb-2">
-                  <span>Registration Capacity</span>
-                  <span>{Math.round((event.registered / event.slots) * 100)}%</span>
-                </div>
-                <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-blue-600 transition-all duration-1000" 
-                    style={{ width: `${(event.registered / event.slots) * 100}%` }}
-                  ></div>
-                </div>
-              </div>
-
-              <button 
-                onClick={() => handleRegister(event.id)}
-                disabled={myEvents.includes(event.id)}
-                className={`w-full mt-8 py-4 rounded-2xl font-bold transition-all ${
-                  myEvents.includes(event.id) 
-                  ? "bg-green-50 text-green-600 cursor-not-allowed" 
-                  : "bg-black text-white hover:bg-gray-800"
-                }`}
-              >
-                {myEvents.includes(event.id) ? "✓ Registered" : "Register Now"}
-              </button>
-            </div>
-          ))}
-        </div>
       </main>
     </div>
   );
