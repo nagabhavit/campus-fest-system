@@ -31,7 +31,7 @@ export default function CampusFestPro() {
         {/* 🧭 NAV CARD */}
         <div style={{ backgroundColor: 'white', padding: '20px 30px', borderRadius: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', marginBottom: '30px' }}>
           <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 900, letterSpacing: '-1px' }}>
-            CAMPUS.FEST <span style={{ color: '#2563eb', fontSize: '12px', backgroundColor: '#eff6ff', padding: '4px 8px', borderRadius: '6px' }}>PRO</span>
+            NAGABHAVIT FEST PRO V4 <span style={{ color: '#2563eb', fontSize: '12px', backgroundColor: '#eff6ff', padding: '4px 8px', borderRadius: '6px' }}>PRO</span>
           </h1>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div style={{ textAlign: 'right' }}>
