@@ -1,109 +1,112 @@
 "use client";
 import React, { useState } from 'react';
-import { QRCodeSVG } from 'qrcode.react';
-
-// --- TYPES ---
-type Role = 'participant' | 'organizer' | 'admin';
 
 export default function CampusFestPro() {
-  const [role, setRole] = useState<Role>('participant');
+  const [role, setRole] = useState('participant');
   const [registrations, setRegistrations] = useState<{ [key: number]: boolean }>({});
-  const [teamNames, setTeamNames] = useState<{ [key: number]: string }>({});
+  const [search, setSearch] = useState("");
 
   const events = [
-    { id: 1, name: "Hackathon 2026", cat: "Technical", venue: "Lab 1", date: "April 20", desc: "Build the future in 24 hours." },
-    { id: 2, name: "Street Dance", cat: "Cultural", venue: "Open Air Theatre", date: "April 21", desc: "Showcase your moves on the big stage." },
-    { id: 3, name: "E-Sports Arena", cat: "Gaming", venue: "Auditorium", date: "April 22", desc: "Valorant and FIFA tournament." },
+    { id: 1, name: "Hackathon 2026", cat: "Technical", date: "April 20", desc: "Build the future in 24 hours. Prize pool: ₹50,000" },
+    { id: 2, name: "Street Dance", cat: "Cultural", date: "April 21", desc: "Showcase your moves on the big stage." },
+    { id: 3, name: "E-Sports Arena", cat: "Gaming", date: "April 22", desc: "Valorant and FIFA tournament." },
   ];
 
-  const toggleReg = (id: number) => {
-    setRegistrations(prev => ({ ...prev, [id]: !prev[id] }));
-  };
+  const filteredEvents = events.filter(e => 
+    e.name.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans text-slate-900" style={{ backgroundColor: '#f8fafc' }}>
+    <div style={{ backgroundColor: '#f1f5f9', minHeight: '100vh', padding: '20px', fontFamily: 'system-ui, sans-serif', color: '#1e293b' }}>
       
-      {/* 🔐 ROLE SWITCHER */}
-      <div className="bg-slate-900 text-white p-3 flex justify-center gap-8 text-[10px] font-bold uppercase tracking-[0.2em]" style={{ backgroundColor: '#0f172a' }}>
-        <span className="opacity-50">Switch Role:</span>
-        <button onClick={() => setRole('participant')} className={`transition-colors ${role === 'participant' ? 'text-blue-400' : 'hover:text-blue-400'}`}>Participant</button>
-        <button onClick={() => setRole('organizer')} className={`transition-colors ${role === 'organizer' ? 'text-green-400' : 'hover:text-green-400'}`}>Organizer</button>
-        <button onClick={() => setRole('admin')} className={`transition-colors ${role === 'admin' ? 'text-red-400' : 'hover:text-red-400'}`}>Admin</button>
+      {/* 🔐 TOP ROLE SWITCHER BAR */}
+      <div style={{ backgroundColor: '#0f172a', color: 'white', padding: '12px', borderRadius: '12px', display: 'flex', justifyContent: 'center', gap: '20px', fontSize: '12px', fontWeight: 'bold', marginBottom: '20px' }}>
+        <span style={{ opacity: 0.5 }}>LOGIN AS:</span>
+        <button onClick={() => setRole('participant')} style={{ background: 'none', border: 'none', color: role === 'participant' ? '#60a5fa' : 'white', cursor: 'pointer' }}>STUDENT</button>
+        <button onClick={() => setRole('admin')} style={{ background: 'none', border: 'none', color: role === 'admin' ? '#f87171' : 'white', cursor: 'pointer' }}>ADMIN/ORGANIZER</button>
       </div>
 
-      {/* 🧭 NAVIGATION */}
-      <nav className="p-6 bg-white border-b border-gray-200 flex justify-between items-center sticky top-0 z-50 shadow-sm" style={{ backgroundColor: 'white', borderBottom: '1px solid #e2e8f0' }}>
-        <h1 className="text-2xl font-black tracking-tighter italic text-slate-900">
-          CAMPUS.FEST <span className="text-blue-600 not-italic text-xs bg-blue-50 px-2 py-1 rounded ml-1" style={{ color: '#2563eb', backgroundColor: '#eff6ff' }}>PRO</span>
-        </h1>
-        <div className="flex gap-4 items-center">
-          <div className="text-right hidden sm:block">
-            <p className="text-[10px] font-bold text-gray-400 uppercase leading-none">Status</p>
-            <p className="text-sm font-bold text-slate-700 uppercase">{role} Mode</p>
-          </div>
-          <div className="h-10 w-10 bg-blue-600 rounded-full border-2 border-white shadow-md" style={{ background: 'linear-gradient(to bottom right, #3b82f6, #8b5cf6)' }}></div>
-        </div>
-      </nav>
-
-      <main className="max-w-6xl mx-auto py-12 px-6">
+      <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
         
+        {/* 🧭 NAV CARD */}
+        <div style={{ backgroundColor: 'white', padding: '20px 30px', borderRadius: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', marginBottom: '30px' }}>
+          <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 900, letterSpacing: '-1px' }}>
+            CAMPUS.FEST <span style={{ color: '#2563eb', fontSize: '12px', backgroundColor: '#eff6ff', padding: '4px 8px', borderRadius: '6px' }}>PRO</span>
+          </h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ textAlign: 'right' }}>
+                <p style={{ margin: 0, fontSize: '10px', color: '#94a3b8', fontWeight: 'bold' }}>VERSION</p>
+                <p style={{ margin: 0, fontSize: '12px', fontWeight: 'bold' }}>3.0.1 (Live)</p>
+            </div>
+            <div style={{ width: '40px', height: '40px', background: 'linear-gradient(to right, #3b82f6, #8b5cf6)', borderRadius: '50%' }}></div>
+          </div>
+        </div>
+
         {role === 'participant' ? (
           <section>
-            <div className="mb-12">
-                <h2 className="text-4xl font-black text-slate-900 mb-2">Discover Events</h2>
-                <p className="text-gray-500">Explore and register for university flagship events.</p>
+            <div style={{ marginBottom: '30px' }}>
+              <h2 style={{ fontSize: '32px', fontWeight: 800, margin: '0 0 10px 0' }}>Discover Events</h2>
+              <input 
+                type="text" 
+                placeholder="Search events (e.g. Hackathon)..." 
+                onChange={(e) => setSearch(e.target.value)}
+                style={{ width: '100%', padding: '15px', borderRadius: '15px', border: '2px solid #e2e8f0', outline: 'none', fontSize: '16px' }}
+              />
             </div>
-            
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {events.map(e => (
-                <div key={e.id} className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all" style={{ backgroundColor: 'white', borderRadius: '2rem', border: '1px solid #f1f5f9' }}>
-                  <div className="flex justify-between items-start mb-6">
-                    <span className="text-[10px] font-black bg-blue-50 text-blue-600 px-3 py-1 rounded-full uppercase tracking-widest" style={{ backgroundColor: '#eff6ff', color: '#2563eb' }}>{e.cat}</span>
-                    <span className="text-[10px] font-bold text-gray-400 uppercase">{e.date}</span>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '25px' }}>
+              {filteredEvents.map(e => (
+                <div key={e.id} style={{ backgroundColor: 'white', padding: '30px', borderRadius: '25px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', border: '1px solid #f1f5f9' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
+                    <span style={{ fontSize: '10px', fontWeight: 900, color: '#2563eb', backgroundColor: '#eff6ff', padding: '5px 10px', borderRadius: '50px' }}>{e.cat}</span>
+                    <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#94a3b8' }}>{e.date}</span>
                   </div>
-                  <h3 className="text-2xl font-bold mb-2 text-slate-900">{e.name}</h3>
-                  <p className="text-sm text-gray-500 mb-6 leading-relaxed">{e.desc}</p>
+                  <h3 style={{ fontSize: '22px', margin: '0 0 10px 0', fontWeight: 800 }}>{e.name}</h3>
+                  <p style={{ color: '#64748b', fontSize: '14px', lineHeight: 1.6, marginBottom: '25px' }}>{e.desc}</p>
                   
                   <button 
-                    onClick={() => toggleReg(e.id)}
-                    className={`w-full py-4 rounded-2xl font-black tracking-tight transition-all shadow-md ${
-                        registrations[e.id] ? 'bg-green-100 text-green-700' : 'bg-slate-900 text-white hover:bg-blue-600'
-                    }`}
-                    style={registrations[e.id] ? { backgroundColor: '#dcfce7', color: '#15803d' } : { backgroundColor: '#0f172a', color: 'white' }}
+                    onClick={() => setRegistrations(prev => ({...prev, [e.id]: !prev[e.id]}))}
+                    style={{ 
+                        width: '100%', 
+                        padding: '15px', 
+                        borderRadius: '15px', 
+                        border: 'none', 
+                        fontWeight: 'bold', 
+                        cursor: 'pointer',
+                        transition: '0.3s',
+                        backgroundColor: registrations[e.id] ? '#dcfce7' : '#0f172a',
+                        color: registrations[e.id] ? '#15803d' : 'white'
+                    }}
                   >
-                    {registrations[e.id] ? '✓ REGISTERED' : 'REGISTER NOW'}
+                    {registrations[e.id] ? '✓ REGISTERED' : 'ONE-CLICK REGISTER'}
                   </button>
                 </div>
               ))}
             </div>
           </section>
         ) : (
-          <section>
-            <div className="flex justify-between items-center mb-10">
-              <h2 className="text-4xl font-black text-slate-900">Admin Portal</h2>
-              <button className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg" style={{ backgroundColor: '#2563eb' }}>+ New Event</button>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12 text-center">
-              <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
-                <p className="text-gray-400 text-[10px] font-bold uppercase mb-1">Registrations</p>
-                <p className="text-3xl font-black text-blue-600">1,284</p>
-              </div>
-              <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
-                <p className="text-gray-400 text-[10px] font-bold uppercase mb-1">Revenue</p>
-                <p className="text-3xl font-black text-green-600">₹54,000</p>
-              </div>
-              <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
-                <p className="text-gray-400 text-[10px] font-bold uppercase mb-1">Volunteers</p>
-                <p className="text-3xl font-black text-purple-600">32</p>
-              </div>
+          <section style={{ backgroundColor: 'white', padding: '40px', borderRadius: '30px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
+            <h2 style={{ fontSize: '28px', fontWeight: 800, marginBottom: '30px' }}>Organizer Dashboard</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px' }}>
+                <div style={{ padding: '25px', backgroundColor: '#eff6ff', borderRadius: '20px' }}>
+                    <p style={{ margin: 0, fontSize: '12px', fontWeight: 'bold', color: '#3b82f6' }}>TOTAL REGISTRATIONS</p>
+                    <p style={{ margin: '10px 0 0 0', fontSize: '32px', fontWeight: 900 }}>1,402</p>
+                </div>
+                <div style={{ padding: '25px', backgroundColor: '#f0fdf4', borderRadius: '20px' }}>
+                    <p style={{ margin: 0, fontSize: '12px', fontWeight: 'bold', color: '#22c55e' }}>NET REVENUE</p>
+                    <p style={{ margin: '10px 0 0 0', fontSize: '32px', fontWeight: 900 }}>₹64,200</p>
+                </div>
+                <div style={{ padding: '25px', backgroundColor: '#faf5ff', borderRadius: '20px' }}>
+                    <p style={{ margin: 0, fontSize: '12px', fontWeight: 'bold', color: '#a855f7' }}>VOLUNTEERS</p>
+                    <p style={{ margin: '10px 0 0 0', fontSize: '32px', fontWeight: 900 }}>48</p>
+                </div>
             </div>
           </section>
         )}
-      </main>
+      </div>
 
-      <footer className="text-center py-12 border-t border-gray-100 text-gray-400 text-[10px] font-bold uppercase tracking-widest">
-        Built for Portfolio • Campus Fest 2026
+      <footer style={{ textAlign: 'center', marginTop: '50px', color: '#94a3b8', fontSize: '12px', fontWeight: 'bold' }}>
+        BUILD FOR PORTFOLIO 2026 • UNIVERSITY PROJECT
       </footer>
     </div>
   );
