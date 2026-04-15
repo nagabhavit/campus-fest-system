@@ -1,119 +1,112 @@
-// v2 update
 "use client";
-import React from 'react';
+import React, { useState } from 'react';
 
-// Mock Data: Shows recruiters you can handle data structures
-const FEATURED_EVENTS = [
-  { 
-    title: "Code-A-Thon 2026", 
-    type: "Technical", 
-    date: "Feb 24", 
-    color: "bg-blue-500",
-    desc: "A 24-hour sprint to build solutions for real-world problems. Join the elite developers of Hyderabad."
-  },
-  { 
-    title: "Groove & Move", 
-    type: "Cultural", 
-    date: "Feb 25", 
-    color: "bg-purple-500",
-    desc: "The annual inter-college dance face-off. Show your rhythm and win the championship."
-  },
-  { 
-    title: "Robo-Wars", 
-    type: "Technical", 
-    date: "Feb 26", 
-    color: "bg-orange-500",
-    desc: "Custom-built robots clashing for the title. Engineering and destruction at its finest."
-  }
-];
+// --- TYPES ---
+type Role = 'student' | 'organizer' | 'admin';
+interface Event {
+  id: number; title: string; category: string; date: string; 
+  desc: string; slots: number; registered: number;
+}
 
-export default function Home() {
+export default function CampusFestPro() {
+  // 1. STATE MANAGEMENT (Role & Data)
+  const [role, setRole] = useState<Role>('student');
+  const [myEvents, setMyEvents] = useState<number[]>([]);
+  const [events, setEvents] = useState<Event[]>([
+    { id: 1, title: "Hack-Hyderabad", category: "Technical", date: "April 20", desc: "24hr coding challenge.", slots: 100, registered: 45 },
+    { id: 2, title: "Cultural Night", category: "Cultural", date: "April 21", desc: "Dance and Music fest.", slots: 500, registered: 120 },
+  ]);
+
+  // 2. FUNCTIONS
+  const handleRegister = (id: number) => {
+    if (!myEvents.includes(id)) {
+      setMyEvents([...myEvents, id]);
+      setEvents(events.map(e => e.id === id ? { ...e, registered: e.registered + 1 } : e));
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-white text-black selection:bg-black selection:text-white">
-      {/* --- NAVBAR --- */}
-      <nav className="flex justify-between items-center px-8 py-6 border-b border-gray-100 sticky top-0 bg-white/80 backdrop-blur-md z-50">
-        <div className="text-xl font-bold tracking-tighter cursor-pointer">CAMPUS.FEST</div>
-        <div className="hidden md:flex space-x-10 text-sm font-medium text-gray-500">
-          <a href="#events" className="hover:text-black transition-colors">Events</a>
-          <a href="#" className="hover:text-black transition-colors">Schedule</a>
-          <a href="#" className="hover:text-black transition-colors">Past Highlights</a>
+    <div className="min-h-screen bg-[#fafafa] text-slate-900 font-sans">
+      {/* ROLE SELECTOR (For Demo Purposes) */}
+      <div className="bg-black text-white p-2 text-center text-[10px] font-bold uppercase tracking-widest">
+        Viewing as: {role} | 
+        <button onClick={() => setRole('student')} className="ml-4 underline">Student</button>
+        <button onClick={() => setRole('organizer')} className="ml-4 underline">Organizer</button>
+      </div>
+
+      {/* NAVBAR */}
+      <nav className="flex justify-between items-center px-10 py-6 bg-white border-b border-gray-200">
+        <h1 className="text-2xl font-black tracking-tighter">FEST.LY</h1>
+        <div className="flex items-center gap-6">
+          <span className="text-sm font-medium text-gray-500">Dashboard</span>
+          <div className="h-10 w-10 bg-gradient-to-tr from-blue-500 to-purple-500 rounded-full shadow-lg"></div>
         </div>
-        <button className="bg-black text-white px-6 py-2 rounded-full text-sm font-semibold hover:bg-gray-800 transition-all active:scale-95">
-          Register Now
-        </button>
       </nav>
 
-      {/* --- HERO SECTION --- */}
-      <main className="max-w-6xl mx-auto px-8 pt-24 pb-20 text-center">
-        <span className="inline-block bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full text-[10px] font-bold tracking-[0.2em] uppercase mb-8">
-          The University Flagship Event
-        </span>
-        <h1 className="text-6xl md:text-8xl font-extrabold tracking-tight text-black mb-8 leading-[0.9]">
-          Experience the <br /> 
-          <span className="text-gray-300">Unforgettable.</span>
-        </h1>
-        <p className="text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed mb-12">
-          The official platform for managing, exploring, and participating in our university's largest annual cultural and technical festivals. Built for students, by students.
-        </p>
-        
-        <div className="flex flex-col md:flex-row justify-center items-center gap-4">
-          <a href="#events" className="w-full md:w-auto bg-black text-white px-10 py-4 rounded-2xl font-bold hover:shadow-2xl hover:shadow-black/20 transition-all active:scale-95">
-            Explore Events
-          </a>
-          <button className="w-full md:w-auto bg-white text-black border border-gray-200 px-10 py-4 rounded-2xl font-bold hover:bg-gray-50 transition-colors">
-            Organizer Login
-          </button>
+      <main className="max-w-6xl mx-auto p-10">
+        {/* HEADER */}
+        <div className="mb-12">
+          <h2 className="text-4xl font-bold">Welcome back, {role === 'student' ? 'Nagabhavit' : 'Admin'}</h2>
+          <p className="text-gray-500 mt-2">Manage your registrations and discover new opportunities.</p>
         </div>
-      </main>
 
-      {/* --- EVENTS DISCOVERY SECTION --- */}
-      <section id="events" className="max-w-6xl mx-auto px-8 py-24 border-t border-gray-100">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-4">
-          <div>
-            <h2 className="text-4xl font-bold tracking-tight">Featured Events</h2>
-            <p className="text-gray-500 mt-2 text-lg">Handpicked highlights for this year's fest.</p>
+        {/* ORGANIZER TOOLS (Conditional Rendering) */}
+        {role !== 'student' && (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-12">
+            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+              <p className="text-xs font-bold text-gray-400 uppercase">Total Regs</p>
+              <p className="text-3xl font-black mt-1">1,240</p>
+            </div>
+            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+              <p className="text-xs font-bold text-gray-400 uppercase">Revenue</p>
+              <p className="text-3xl font-black mt-1">₹45,000</p>
+            </div>
+            <button className="md:col-span-2 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-colors">
+              + Create New Event
+            </button>
           </div>
-          <button className="text-sm font-bold text-black border-b-2 border-black pb-1 hover:text-gray-500 hover:border-gray-500 transition-all">
-            View All 24 Events →
-          </button>
-        </div>
+        )}
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-          {FEATURED_EVENTS.map((event, index) => (
-            <div key={index} className="group cursor-pointer">
-              <div className="relative h-64 w-full bg-gray-50 rounded-3xl mb-6 overflow-hidden border border-gray-100">
-                {/* Visual Placeholder for Event Image */}
-                <div className={`absolute inset-0 opacity-20 ${event.color}`}></div>
-                <div className="absolute top-6 left-6 bg-white px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-sm">
-                  {event.type}
+        {/* EVENT LIST */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {events.map(event => (
+            <div key={event.id} className="bg-white rounded-3xl p-8 border border-gray-100 hover:shadow-2xl hover:shadow-blue-500/5 transition-all group">
+              <div className="flex justify-between items-start mb-6">
+                <span className="px-4 py-1 bg-slate-100 rounded-full text-[10px] font-bold uppercase tracking-widest">{event.category}</span>
+                <span className="text-sm font-bold text-blue-600">{event.date}</span>
+              </div>
+              <h3 className="text-2xl font-bold group-hover:text-blue-600 transition-colors">{event.title}</h3>
+              <p className="text-gray-500 mt-4 leading-relaxed">{event.desc}</p>
+              
+              {/* PROGRESS BAR (Analytics Feature) */}
+              <div className="mt-8">
+                <div className="flex justify-between text-xs font-bold mb-2">
+                  <span>Registration Capacity</span>
+                  <span>{Math.round((event.registered / event.slots) * 100)}%</span>
+                </div>
+                <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-blue-600 transition-all duration-1000" 
+                    style={{ width: `${(event.registered / event.slots) * 100}%` }}
+                  ></div>
                 </div>
               </div>
-              <p className="text-xs font-bold text-blue-600 mb-2 tracking-wide uppercase">{event.date}</p>
-              <h3 className="text-2xl font-bold group-hover:underline decoration-2 underline-offset-4 transition-all">
-                {event.title}
-              </h3>
-              <p className="text-gray-500 text-sm mt-3 leading-relaxed">
-                {event.desc}
-              </p>
+
+              <button 
+                onClick={() => handleRegister(event.id)}
+                disabled={myEvents.includes(event.id)}
+                className={`w-full mt-8 py-4 rounded-2xl font-bold transition-all ${
+                  myEvents.includes(event.id) 
+                  ? "bg-green-50 text-green-600 cursor-not-allowed" 
+                  : "bg-black text-white hover:bg-gray-800"
+                }`}
+              >
+                {myEvents.includes(event.id) ? "✓ Registered" : "Register Now"}
+              </button>
             </div>
           ))}
         </div>
-      </section>
-
-      {/* --- FOOTER --- */}
-      <footer className="bg-gray-50 py-20 px-8 border-t border-gray-100">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-          <div className="text-center md:text-left">
-            <h3 className="text-xl font-bold tracking-tighter mb-2">CAMPUS.FEST</h3>
-            <p className="text-gray-400 text-sm">© 2026 University Event Management. All rights reserved.</p>
-          </div>
-          <div className="flex space-x-8 text-sm font-bold text-gray-400 uppercase tracking-widest">
-            <a href="#" className="hover:text-black">Twitter</a>
-            <a href="#" className="hover:text-black">Instagram</a>
-            <a href="#" className="hover:text-black">LinkedIn</a>
-          </div>
-        </div>
-      </footer>
+      </main>
     </div>
   );
 }
